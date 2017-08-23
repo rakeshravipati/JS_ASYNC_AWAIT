@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+</head>
+<body>
+	Resouce - 1 : Learning ASYNC && AWAIT IN JS referrence <a href="https://blog.patricktriest.com/what-is-async-await-why-should-you-care/">Patrick Triest</a>
+	<script src="apiclass.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+		function callbackhell(){
+			const api = new Api();
+			let user, friends;
+			api.getUser().then( function(returnedUser){
+				console.log("get User - 1");
+				user = returnedUser;
+				api.getFriends(user.id).then(function(returnedFriends){
+					console.log("get friends - 2");
+					friends = returnedFriends;
+					api.getPhoto(user.id).then(function(photo){
+						console.log("get photo - 3");
+						console.log("callbackHell", { user, friends, photo });
+					});
+				});
+			});
+		}
+		
+		function promiseChain(){
+			const api = new Api();
+			let user, friends;
+			api.getUser()
+				.then( (returnedUser) =>{
+					console.log("  ");
+					user = returnedUser;
+					return api.getFriends(user.id);
+				})
+				.then( (returnedFriends) => {
+					friends = returnedFriends;
+					return api.getPhoto(user.id);
+				})
+				.then( (photo) => {
+					console.log('promiseChain', { user, friends, photo });
+				});
+
+		}
+	</script>
+</body>
+</html>
