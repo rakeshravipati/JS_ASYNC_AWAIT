@@ -13,37 +13,79 @@
 			const api = new Api();
 			let user, friends;
 			api.getUser().then( function(returnedUser){
-				console.log("get User - 1");
+				console.log("call backhell: get User - 1");
 				user = returnedUser;
 				api.getFriends(user.id).then(function(returnedFriends){
-					console.log("get friends - 2");
+					console.log("call backhell: get friends - 2");
 					friends = returnedFriends;
 					api.getPhoto(user.id).then(function(photo){
-						console.log("get photo - 3");
+						console.log("call backhell: get photo - 3");
 						console.log("callbackHell", { user, friends, photo });
+						console.groupEnd();
 					});
 				});
 			});
 		}
-		
+		//callbackhell();
 		function promiseChain(){
 			const api = new Api();
 			let user, friends;
 			api.getUser()
 				.then( (returnedUser) =>{
-					console.log("  ");
+					console.log("promiseChain: get User -  1");
 					user = returnedUser;
 					return api.getFriends(user.id);
 				})
 				.then( (returnedFriends) => {
+					console.log("promiseChain: get User Friends - 2");
 					friends = returnedFriends;
 					return api.getPhoto(user.id);
 				})
 				.then( (photo) => {
+					console.log("promiseChain: get User Photo - 3");
 					console.log('promiseChain', { user, friends, photo });
 				});
 
 		}
+
+		//promiseChain();
+
+		async function asyncAwaitIsYourNewBestFriend(){
+			console.log("Fetching User Data");
+			const  api = new Api();
+			const user = await api.getUser();
+			console.log("User Details:", user);
+			const friends = await api.getFriends(user.id);
+			console.log("friends:", friends);
+			const photo = await api.getPhoto(user.id);
+			console.log('asyncAwaitIsYourNewBestFriend', { user, friends, photo });
+		}
+
+		//asyncAwaitIsYourNewBestFriend();
+
+		function promiseLoops () {  
+		  const api = new Api()
+		  api.getUser()
+		    .then((user) => {
+		      return api.getFriends(user.id)
+		    })
+		    .then((returnedFriends) => {
+		      	const getFriendsOfFriends = (friends) => {
+		      		console.log(friends.length);
+		        	if (friends.length > 0) {
+		          		let friend = friends.pop()
+		          		api.getFriends(friend.id)
+			            .then((moreFriends) => {
+			              console.log('promiseLoops', moreFriends)
+			              return getFriendsOfFriends(friends)
+			            })
+		        	}
+		      	}
+		      return getFriendsOfFriends(returnedFriends)
+		    })
+		}
+
+		promiseLoops();
 	</script>
 </body>
 </html>
